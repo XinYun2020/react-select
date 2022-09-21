@@ -1,0 +1,117 @@
+.container {
+    position: relative;
+    width: 20em;
+    min-height: 1.5em;  /* able to wrap new line */
+    border: .05em solid #777;
+    display: flex;
+    align-items: center;
+    gap: .5em;          /* space out */
+    padding: .5em;      /* space out */
+    border-radius: .25em;
+    outline: none;      /* able to add own focus style */
+}
+
+.container:focus {
+    border-color: hsl(200,100%,50%);
+}
+
+.value {
+    flex-grow: 1;       /* to the far to  the right a possible */
+    display: flex;
+    gap: .5em;
+    flex-wrap: wrap;    /* enable value button wrap */
+}
+
+.clear-btn {
+    background: none;
+    color: #777;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0;         /* small as possible */
+    font-size: 1.25em;
+}
+
+.clear-btn:focus,
+.clear-btn:hover {
+    color: #333
+}
+
+.divider {
+    background-color: #777;
+    /* height: 100%; doesnt show up b/c we are using min-height */
+    align-self: stretch ;   /* for flexbox */
+    width: .05em;       
+}
+
+.caret {
+    translate: 0 25%;            /* translate down in y direction */
+    border: .25em solid transparent;
+    border-top-color: #777;    /* form a triangle caret symbol */
+}
+
+.options {
+    position: absolute;     /* relative + TRBL control*/
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: none;
+    max-height: 5em;
+    overflow-y: auto;       /* enable scroll */
+    border: .05em solid #777;
+    border-radius: .25em;
+    width: 100%;
+    left: 0;
+    top: calc(100% + .25em);
+    background-color: white;
+    z-index: 100;
+}
+
+.options.show {
+    display: block;
+}
+
+.option {
+    padding: .25em .5em;
+    cursor: pointer;
+}
+
+.option.selected {
+    background-color: hsl(200,100%,70%); /* darker brighter blue */
+}
+
+/* highlighted style overwrites select */
+.option.highlighted {
+    background-color: hsl(200,100%,50%); /* lighter blue */
+    color: white;
+}
+
+.option-badge {
+    display: flex;
+    align-items: center;
+    border: .05em solid #777;
+    border-radius: .25em;
+    padding: .15em .25em;
+    gap: .25em;
+    cursor: pointer;
+    background: none;
+    outline: none;
+}
+
+.option-badge:hover,
+.option-badge:focus {
+    background-color: hsl(0,100%,90%);
+    border-color: hsl(0,100%,50%);
+}
+
+/* > : only the direct children */
+.option-badge:hover > .remove-btn,
+.option-badge:focus > .remove-btn {
+    color: hsl(0,100%,50%);
+}
+
+/* when not hovering / focus */
+.option-badge > .remove-btn {
+    font-size: 1.25em;      /* 放大 x close button */
+    color: #777;
+}
