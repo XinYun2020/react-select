@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./select.module.css";
 
 export type SelectOption = {
@@ -31,6 +31,7 @@ export function Select({ multiple, value, onChange, options }: SelectProps) {
   /* Only show when we have state variable */
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null); // for keyboard accessibility
 
   const clearOptions = () => {
     /* Checking based on multiple property */
@@ -61,8 +62,57 @@ export function Select({ multiple, value, onChange, options }: SelectProps) {
     if (isOpen) setHighlightedIndex(0);
   }, [isOpen]);
 
+  /* Ref for keyboard accessibility */
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      /*
+        if the element that we are targeting with the 'keydown' event
+        is not the actual container itself => return
+
+        outside options, dont listenEvent
+      */
+      if (e.target != containerRef.current) return;
+      /* Gives the key user is clicking */
+      switch (e.code) {
+        case "Enter":
+        case "Space":
+          setIsOpen((prev) => !prev);
+          if (isOpen) selectOption(options[highlightedIndex]);
+          break;
+        case "ArrowUp":
+        case "ArrowDown": {
+          if (!isOpen) {
+            setIsOpen(true);
+            break;
+          }
+
+          const newValue = highlightedIndex + (e.code === "ArrowDown" ? 1 : -1); // the {} makes sure this variable always inside the block scope
+          if (newValue >= 0 && newValue < options.length) {
+            setHighlightedIndex(newValue);
+          }
+          break;
+        }
+        case "Escape":
+          setIsOpen(false);
+          break;
+      }
+    };
+
+    containerRef.current?.addEventListener("keydown", handler);
+
+    /* return a function that is going to remove the event listener */
+    return () => {
+      containerRef.current?.removeEventListener("keydown", handler);
+    };
+  }, [
+    isOpen,
+    highlightedIndex,
+    options,
+  ]); /* []: effect doesnt depend on any values from props or state, never re-run */
+
   return (
     <div
+      ref={containerRef} // add keyboard accessibility
       onBlur={() => setIsOpen(false)} // click on other place will also close the dropdown
       onClick={() => setIsOpen((prev) => !prev)}
       tabIndex={0}
